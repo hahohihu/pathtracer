@@ -1,4 +1,5 @@
 mod vec3;
+mod ray;
 
 use std::{io::{Write, stdout, BufWriter}, fs::File};
 use vec3::*;
@@ -21,8 +22,7 @@ fn main() {
         stdout().flush().unwrap();
         for ix in 0..image_width {
             let color = Color::new(ix as f64 / (image_width as f64 - 1.0), iy as f64 / (image_height as f64 - 1.0), 0.25);
-
-            writeln!(out, "{color}").unwrap();
+            color.show_as_color(&mut out);
         }
     }
     print!("{RESET_LINE}");
