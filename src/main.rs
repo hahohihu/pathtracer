@@ -1,6 +1,7 @@
 mod vec3;
 
 use std::{io::{Write, stdout, BufWriter}, fs::File};
+use vec3::*;
 
 const RESET_LINE: &str = "\x1B[2K\r"; 
 
@@ -19,15 +20,9 @@ fn main() {
         print!("Scanlines remaining: {iy}");
         stdout().flush().unwrap();
         for ix in 0..image_width {
-            let r = ix as f64 / (image_width as f64 - 1.0);
-            let g = iy as f64 / (image_height as f64 - 1.0);
-            let b = 0.25;
+            let color = Color::new(ix as f64 / (image_width as f64 - 1.0), iy as f64 / (image_height as f64 - 1.0), 0.25);
 
-            let ir = (r * 255.999) as i64;
-            let ig = (g * 255.999) as i64;
-            let ib = (b * 255.999) as i64;
-
-            writeln!(out, "{ir} {ig} {ib}").unwrap();
+            writeln!(out, "{color}").unwrap();
         }
     }
     print!("{RESET_LINE}");
