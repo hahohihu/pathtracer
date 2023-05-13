@@ -26,16 +26,35 @@ impl Vec3 {
     }
 
     pub fn length_squared(&self) -> f64 {
-        self.0 * self.0 + self.1 * self.1 + self.2 * self.2
+        self.dot(self)
+    }
+
+    pub fn dot(&self, other: &Self) -> f64 {
+        self.0 * other.0 + // rustfmt guard
+        self.1 * other.1 + // rustfmt guard
+        self.2 * other.2
+    }
+
+    pub fn cross(&self, other: &Self) -> Self {
+        Self(
+            self.1 * self.2 - self.2 * self.1,
+            self.2 * self.0 - self.0 * self.2,
+            self.0 * self.1 - self.1 * self.0,
+        )
+    }
+
+    pub fn unit_vec(&self) -> Self {
+        *self / self.length()
     }
 }
 
 impl Display for Vec3 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "({}, {}, {})", self.x(), self.y(), self.z())
+        write!(f, "{} {} {}", self.x(), self.y(), self.z())
     }
 }
 
+// vector operations: vec * vec
 impl SubAssign for Vec3 {
     fn sub_assign(&mut self, rhs: Self) {
         self.0 -= rhs.0;
@@ -67,7 +86,7 @@ impl MulAssign for Vec3 {
     }
 }
 
-impl Mul for Vec3 {
+impl Mul<Vec3> for Vec3 {
     type Output = Self;
     fn mul(mut self, rhs: Self) -> Self::Output {
         self *= rhs;
@@ -88,6 +107,22 @@ impl Div for Vec3 {
     fn div(mut self, rhs: Self) -> Self::Output {
         self /= rhs;
         self
+    }
+}
+
+// scalar ops: scalar * vec
+
+impl Mul<f64> for Vec3 {
+    type Output = Self;
+    fn mul(self, rhs: f64) -> Self::Output {
+        Self(self.0 * rhs, self.1 * rhs, self.2 * rhs)
+    }
+}
+
+impl Div<f64> for Vec3 {
+    type Output = Self;
+    fn div(self, rhs: f64) -> Self::Output {
+        Self(self.0 / rhs, self.1 / rhs, self.2 / rhs)
     }
 }
 
