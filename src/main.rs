@@ -1,3 +1,5 @@
+mod vec3;
+
 use std::{io::{Write, stdout, BufWriter}, fs::File};
 
 const RESET_LINE: &str = "\x1B[2K\r"; 
