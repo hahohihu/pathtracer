@@ -7,10 +7,23 @@ use vec3::*;
 
 const RESET_LINE: &str = "\x1B[2K\r"; 
 
+fn hit_sphere(center: &Point, radius: f64, ray: &Ray) -> bool {
+    let oc = ray.origin - *center;
+    let a = ray.direction.dot(&ray.direction);
+    let b = 2.0 * oc.dot(&ray.direction);
+    let c = oc.dot(&oc) - radius * radius;
+    let discriminant = b * b - 4.0 * a * c;
+    discriminant > 0.0
+}
+
 fn ray_color(ray: &Ray) -> Color {
-    let unit_dir = ray.direction.unit_vec();
-    let t = 0.5 * (unit_dir.y() + 1.0);
-    (1.0 - t) * Color::new(1.0, 1.0, 1.0) + t * Color::new(0.5, 0.7, 1.0)
+    if hit_sphere(&Point::new(0.0, 0.0, -1.0), 0.5, ray) {
+        Color::new(1.0, 1.0, 0.9)
+    } else {
+        let unit_dir = ray.direction.unit_vec();
+        let t = 0.5 * (unit_dir.y() + 1.0);
+        (1.0 - t) * Color::new(1.0, 1.0, 1.0) + t * Color::new(0.5, 0.7, 1.0)
+    }
 }
 
 fn main() {
