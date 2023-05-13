@@ -1,7 +1,7 @@
 use std::{
     io::Write,
     fmt::{Display},
-    ops::{Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign},
+    ops::{Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign, AddAssign, Add},
 };
 
 
@@ -62,6 +62,22 @@ impl Display for Vec3 {
     }
 }
 
+impl AddAssign for Vec3 {
+    fn add_assign(&mut self, rhs: Self) {
+        self.0 += rhs.0;
+        self.1 += rhs.1;
+        self.2 += rhs.2;
+    }
+}
+
+impl Add for Vec3 {
+    type Output = Self;
+    fn add(mut self, rhs: Self) -> Self::Output {
+        self += rhs;
+        self
+    }
+}
+
 impl SubAssign for Vec3 {
     fn sub_assign(&mut self, rhs: Self) {
         self.0 -= rhs.0;
@@ -116,6 +132,14 @@ impl Mul<f64> for Vec3 {
         Self(self.0 * rhs, self.1 * rhs, self.2 * rhs)
     }
 }
+
+impl Mul<Vec3> for f64 {
+    type Output = Vec3;
+    fn mul(self, rhs: Vec3) -> Self::Output {
+        rhs * self
+    }
+}
+
 impl Div<f64> for Vec3 {
     type Output = Self;
     fn div(self, rhs: f64) -> Self::Output {
