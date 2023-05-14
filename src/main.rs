@@ -11,7 +11,7 @@ use material::{dielectric::Dielectric, lambertian::Lambertian, metal::Metal};
 use std::{
     fs::File,
     io::{stdout, BufWriter, Write},
-    rc::Rc,
+    sync::Arc,
 };
 
 use crate::camera::Camera;
@@ -65,8 +65,8 @@ fn write_color(f: &mut impl Write, color: &Color, samples_per_pixel: u32) {
 
 fn make_random_scene() -> HitList {
     let mut world = HitList::default();
-    let ground = Rc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
-    world.add(Rc::new(Sphere::new(
+    let ground = Arc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
+    world.add(Arc::new(Sphere::new(
         Point::new(0.0, -1000.0, 0.0),
         1000.0,
         ground,
@@ -80,34 +80,34 @@ fn make_random_scene() -> HitList {
                 b as f64 + 0.9 * random::unit(),
             );
             if (center - Point::new(4.0, 0.2, 0.0)).length() > 0.9 {
-                let mat: Rc<dyn Material> = if material_choice < 0.8 {
+                let mat: Arc<dyn Material> = if material_choice < 0.8 {
                     let albedo = Color::random_unit() * Color::random_unit();
-                    Rc::new(Lambertian::new(albedo))
+                    Arc::new(Lambertian::new(albedo))
                 } else if material_choice < 0.95 {
                     let albedo = Color::random(0.5, 1.0);
                     let fuzz = random::range(0.0, 0.5);
-                    Rc::new(Metal::new(albedo, fuzz))
+                    Arc::new(Metal::new(albedo, fuzz))
                 } else {
-                    Rc::new(Dielectric::new(1.5))
+                    Arc::new(Dielectric::new(1.5))
                 };
-                world.add(Rc::new(Sphere::new(center, 0.2, mat)));
+                world.add(Arc::new(Sphere::new(center, 0.2, mat)));
             }
         }
     }
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(0.0, 1.0, 0.0),
         1.0,
-        Rc::new(Dielectric::new(1.5)),
+        Arc::new(Dielectric::new(1.5)),
     )));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(-4.0, 1.0, 0.0),
         1.0,
-        Rc::new(Lambertian::new(Color::new(0.4, 0.2, 0.1))),
+        Arc::new(Lambertian::new(Color::new(0.4, 0.2, 0.1))),
     )));
-    world.add(Rc::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point::new(4.0, 1.0, 0.0),
         1.0,
-        Rc::new(Metal::new(Color::new(0.7, 0.6, 0.5), 0.0)),
+        Arc::new(Metal::new(Color::new(0.7, 0.6, 0.5), 0.0)),
     )));
     world
 }
@@ -120,7 +120,7 @@ fn main() {
     let aspect_ratio = 3.0 / 2.0;
     let image_width = 1200.0;
     let image_height = image_width / aspect_ratio;
-    let samples_per_pixel = 500;
+    let samples_per_pixel = 1;
     let max_depth = 50;
 
     writeln!(out, "P3").unwrap();
@@ -145,25 +145,43 @@ fn main() {
         aperture,
         dist_to_focus,
     );
+    let worker_count = 8;
 
     let rand_aa_modifier = || random::range(0.0, 1.0);
-
-    // Render
-    for iy in (0..image_height as i64).rev() {
-        print!("{RESET_LINE}");
-        print!("Scanlines remaining: {iy}");
-        stdout().flush().unwrap();
-        for ix in 0..image_width as i64 {
-            let mut pixel_color = Color::new(0.0, 0.0, 0.0);
-            for _ in 0..samples_per_pixel {
-                let u = (ix as f64 + rand_aa_modifier()) / (image_width - 1.0);
-                let v = (iy as f64 + rand_aa_modifier()) / (image_height - 1.0);
-                let ray = camera.get_ray(u, v);
-                pixel_color += ray_color(&ray, &world, max_depth);
-            }
-            write_color(&mut out, &pixel_color, samples_per_pixel);
+    std::thread::scope(|s| {
+        let mut workers = vec![];
+        let mut i = image_height as i64;
+        let step = image_height as i64 / worker_count + 1;
+        while i > 0 {
+            let worker_start = i;
+            i -= step;
+            let worker_stop = i.max(0);
+            let world = &world;
+            let camera = &camera;
+            workers.push(s.spawn(move || {
+                let mut res = vec![];
+                for iy in (worker_stop..worker_start).rev() {
+                    for ix in 0..image_width as i64 {
+                        let mut pixel_color = Color::new(0.0, 0.0, 0.0);
+                        for _ in 0..samples_per_pixel {
+                            let u = (ix as f64 + rand_aa_modifier()) / (image_width - 1.0);
+                            let v = (iy as f64 + rand_aa_modifier()) / (image_height - 1.0);
+                            let ray = camera.get_ray(u, v);
+                            pixel_color += ray_color(&ray, world, max_depth);
+                        }
+                        res.push(pixel_color);
+                    }
+                }
+                res
+            }));
         }
-    }
-    print!("{RESET_LINE}");
-    println!("Done.");
+        for worker in workers {
+            let res = worker.join().unwrap();
+            for color in res {
+                write_color(&mut out, &color, samples_per_pixel);
+            }
+        }       
+        print!("{RESET_LINE}");
+        println!("Done.");
+    })
 }
