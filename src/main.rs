@@ -22,7 +22,7 @@ fn ray_color(ray: &Ray, world: &HitList, depth: usize) -> Color {
         return Color::new(0.0, 0.0, 0.0);
     }
     let white = Color::new(1.0, 1.0, 1.0);
-    if let Some(rec) = world.hit(ray, 0.0, f64::INFINITY) {
+    if let Some(rec) = world.hit(ray, 0.001, f64::INFINITY) {
         let target = rec.point + rec.normal + Vec3::random_in_unit_sphere();
         0.5 * ray_color(&Ray::new(rec.point, target - rec.point), world, depth - 1)
     } else {
@@ -41,9 +41,9 @@ fn write_color(f: &mut impl Write, color: &Color, samples_per_pixel: u32) {
     let mut b = color.2;
 
     let scale = 1.0 / samples_per_pixel as f64;
-    r *= scale;
-    g *= scale;
-    b *= scale;
+    r = (r * scale).sqrt();
+    g = (g * scale).sqrt();
+    b = (b * scale).sqrt();
 
     writeln!(
         f,
