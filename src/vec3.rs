@@ -78,6 +78,30 @@ impl Add for Vec3 {
     }
 }
 
+impl AddAssign<f64> for Vec3 {
+    fn add_assign(&mut self, rhs: f64) {
+        self.0 += rhs;
+        self.1 += rhs;
+        self.2 += rhs;
+    }
+}
+
+impl Add<Vec3> for f64 {
+    type Output = Vec3;
+    fn add(self, mut rhs: Vec3) -> Self::Output {
+        rhs += self;
+        rhs
+    }
+}
+
+impl Add<f64> for Vec3 {
+    type Output = Vec3;
+    fn add(mut self, rhs: f64) -> Self::Output {
+        self += rhs;
+        self
+    }
+}
+
 impl SubAssign for Vec3 {
     fn sub_assign(&mut self, rhs: Self) {
         self.0 -= rhs.0;
@@ -85,6 +109,7 @@ impl SubAssign for Vec3 {
         self.2 -= rhs.2;
     }
 }
+
 impl Sub for Vec3 {
     type Output = Self;
     fn sub(mut self, rhs: Self) -> Self::Output {
