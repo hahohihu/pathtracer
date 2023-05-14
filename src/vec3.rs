@@ -7,7 +7,7 @@ use std::{
 
 
 #[derive(Default, Debug, Clone, Copy)]
-pub struct Vec3(f64, f64, f64);
+pub struct Vec3(pub f64, pub f64, pub f64);
 
 impl Vec3 {
     pub fn new(x: f64, y: f64, z: f64) -> Self {
@@ -40,19 +40,6 @@ impl Vec3 {
     }
     pub fn unit_vec(&self) -> Self {
         *self / self.length()
-    }
-
-    pub fn show_as_color(&self, f: &mut impl Write) {
-        fn rgb_to_int(value: f64) -> i64 {
-            (value * 255.999) as i64
-        }
-        writeln!(
-            f,
-            "{} {} {}",
-            rgb_to_int(self.0),
-            rgb_to_int(self.1),
-            rgb_to_int(self.2)
-        ).unwrap()
     }
 }
 
