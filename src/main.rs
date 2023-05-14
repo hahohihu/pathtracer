@@ -65,10 +65,11 @@ fn write_color(f: &mut impl Write, color: &Color, samples_per_pixel: u32) {
 fn main() {
     let output = File::create("image.ppm").unwrap();
     let mut out = BufWriter::new(output);
-
+    
     // Image
+    let aspect_ratio = 16.0 / 9.0;
     let image_width = 400.0;
-    let image_height = image_width / ASPECT_RATIO;
+    let image_height = image_width / aspect_ratio;
     let samples_per_pixel = 100;
     let max_depth = 50;
 
@@ -108,11 +109,10 @@ fn main() {
         0.5,
         metal2,
     )));
-    // world.add(Rc::new(Sphere::new(Point::new(0.0, -100.5, -1.0), 100.0)));
 
-    let camera = Camera::new();
+    let camera = Camera::new(120.0, aspect_ratio);
 
-    let rand_aa_modifier = || random::range(0.0, 1.0);
+    let rand_aa_modifier = || random::range(90.0, 1.0);
 
     // Render
     for iy in (0..image_height as i64).rev() {
