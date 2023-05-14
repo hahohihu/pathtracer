@@ -6,7 +6,7 @@ mod material;
 use common::*;
 use hittable::Hittable;
 use hittable::{hit_list::HitList, sphere::Sphere};
-use material::{lambertian::Lambertian, metal::Metal, dielectric::Dielectric};
+use material::{dielectric::Dielectric, lambertian::Lambertian, metal::Metal};
 use std::{
     fs::File,
     io::{stdout, BufWriter, Write},
@@ -65,7 +65,7 @@ fn write_color(f: &mut impl Write, color: &Color, samples_per_pixel: u32) {
 fn main() {
     let output = File::create("image.ppm").unwrap();
     let mut out = BufWriter::new(output);
-    
+
     // Image
     let aspect_ratio = 16.0 / 9.0;
     let image_width = 400.0;
@@ -80,7 +80,7 @@ fn main() {
     // World
     let mut world = HitList::default();
     let ground = Rc::new(Lambertian::new(Color::new(0.8, 0.8, 0.0)));
-    let matte = Rc::new(Lambertian::new(Color::new(0.7, 0.3, 0.3)));
+    let matte = Rc::new(Lambertian::new(Color::new(0.1, 0.2, 0.5)));
     let metal1 = Rc::new(Metal::new(Color::new(0.8, 0.8, 0.8), 0.3));
     let metal2 = Rc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 1.0));
     let glass = Rc::new(Dielectric::new(1.5));
@@ -89,11 +89,7 @@ fn main() {
         100.0,
         ground,
     )));
-    world.add(Rc::new(Sphere::new(
-        Point::new(0.0, 0.0, -1.0),
-        0.5,
-        matte,
-    )));
+    world.add(Rc::new(Sphere::new(Point::new(0.0, 0.0, -1.0), 0.5, matte)));
     world.add(Rc::new(Sphere::new(
         Point::new(-1.0, 0.0, -1.0),
         0.5,
@@ -110,7 +106,13 @@ fn main() {
         metal2,
     )));
 
-    let camera = Camera::new(90.0, aspect_ratio);
+    let camera = Camera::new(
+        Point::new(-2.0, 2.0, 1.0),
+        Point::new(0.0, 0.0, -1.0),
+        Point::new(0.0, 1.0, 0.0),
+        20.0,
+        aspect_ratio,
+    );
 
     let rand_aa_modifier = || random::range(0.0, 1.0);
 
