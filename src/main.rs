@@ -150,7 +150,6 @@ fn main() {
     );
     let worker_count = 6;
 
-    let rand_aa_modifier = || random::range(0.0, 1.0);
     let counter = AtomicUsize::new(0);
     std::thread::scope(|s| {
         let mut workers = vec![];
@@ -169,8 +168,8 @@ fn main() {
                     for ix in 0..image_width as i64 {
                         let mut pixel_color = Color::new(0.0, 0.0, 0.0);
                         for _ in 0..samples_per_pixel {
-                            let u = (ix as f64 + rand_aa_modifier()) / (image_width - 1.0);
-                            let v = (iy as f64 + rand_aa_modifier()) / (image_height - 1.0);
+                            let u = (ix as f64 + random::unit()) / (image_width - 1.0);
+                            let v = (iy as f64 + random::unit()) / (image_height - 1.0);
                             let ray = camera.get_ray(u, v);
                             pixel_color += ray_color(&ray, world, max_depth);
                         }
