@@ -60,6 +60,14 @@ impl Vec3 {
     pub fn random_unit_vector() -> Self {
         Self::random_in_unit_sphere().unit_vec()
     }
+    pub fn random_in_hemisphere(normal: &Vec3) -> Self {
+        let point = Self::random_in_unit_sphere();
+        if point.dot(normal) > 0.0 {
+            point
+        } else {
+            -point
+        }
+    }
 }
 
 impl Display for Vec3 {

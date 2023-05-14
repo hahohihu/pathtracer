@@ -24,6 +24,7 @@ fn ray_color(ray: &Ray, world: &HitList, depth: usize) -> Color {
     let white = Color::new(1.0, 1.0, 1.0);
     if let Some(rec) = world.hit(ray, 0.001, f64::INFINITY) {
         let target = rec.point + rec.normal + Vec3::random_unit_vector();
+        // let target = rec.point + Vec3::random_in_hemisphere(&rec.normal);
         0.5 * ray_color(&Ray::new(rec.point, target - rec.point), world, depth - 1)
     } else {
         let unit_dir = ray.direction.unit_vec();
