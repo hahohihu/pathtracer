@@ -1,6 +1,5 @@
 use std::{
     fmt::Display,
-    io::Write,
     ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign},
 };
 
