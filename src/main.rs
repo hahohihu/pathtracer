@@ -1,25 +1,19 @@
 mod camera;
+mod common;
 mod hittable;
 mod material;
-mod common;
 
-use hittable::Hittable;
 use common::*;
+use hittable::Hittable;
+use hittable::{hit_list::HitList, sphere::Sphere};
+use material::{lambertian::Lambertian, metal::Metal};
 use std::{
     fs::File,
     io::{stdout, BufWriter, Write},
     rc::Rc,
 };
-use material::{
-    lambertian::Lambertian,
-    metal::Metal
-};
-use hittable::{
-    hit_list::HitList,
-    sphere::Sphere,
-};
 
-use crate::{camera::Camera};
+use crate::camera::Camera;
 
 const RESET_LINE: &str = "\x1B[2K\r";
 

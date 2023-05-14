@@ -1,8 +1,11 @@
-use crate::{common::*, material::{Material, ScatterRecord}};
+use crate::{
+    common::*,
+    material::{Material, ScatterRecord},
+};
 
 #[derive(Debug)]
 pub struct Metal {
-    albedo: Color
+    albedo: Color,
 }
 
 impl Metal {
@@ -18,11 +21,10 @@ impl Material for Metal {
         if scattered.direction.dot(&rec.normal) > 0.0 {
             Some(ScatterRecord {
                 scattered,
-                attenuation: self.albedo
+                attenuation: self.albedo,
             })
         } else {
             None
         }
     }
 }
-

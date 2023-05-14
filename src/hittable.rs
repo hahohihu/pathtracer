@@ -1,8 +1,8 @@
 pub mod hit_list;
 pub mod sphere;
 
-use std::rc::Rc;
 use crate::{material::Material, ray::Ray, vec3::*};
+use std::rc::Rc;
 
 #[derive(Debug)]
 pub struct HitRecord {
