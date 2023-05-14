@@ -45,7 +45,7 @@ impl Camera {
             u,
             v,
             w,
-            lens_radius
+            lens_radius,
         }
     }
 

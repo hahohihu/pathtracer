@@ -1,8 +1,8 @@
+use crate::random;
 use std::{
     fmt::Display,
     ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign},
 };
-use crate::random;
 
 #[derive(Default, Debug, Clone, Copy)]
 pub struct Vec3(pub f64, pub f64, pub f64);
@@ -50,7 +50,6 @@ impl Vec3 {
         *self / self.length()
     }
 
-    
     pub fn random_unit() -> Self {
         Self::random(0.0, 1.0)
     }

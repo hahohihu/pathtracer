@@ -8,6 +8,9 @@ use hittable::Hittable;
 use hittable::{hit_list::HitList, sphere::Sphere};
 use material::Material;
 use material::{dielectric::Dielectric, lambertian::Lambertian, metal::Metal};
+use std::sync::atomic::{AtomicUsize, Ordering};
+use std::thread;
+use std::time::Duration;
 use std::{
     fs::File,
     io::{stdout, BufWriter, Write},
@@ -120,7 +123,7 @@ fn main() {
     let aspect_ratio = 3.0 / 2.0;
     let image_width = 1200.0;
     let image_height = image_width / aspect_ratio;
-    let samples_per_pixel = 1;
+    let samples_per_pixel = 10;
     let max_depth = 50;
 
     writeln!(out, "P3").unwrap();
@@ -145,9 +148,10 @@ fn main() {
         aperture,
         dist_to_focus,
     );
-    let worker_count = 8;
+    let worker_count = 6;
 
     let rand_aa_modifier = || random::range(0.0, 1.0);
+    let counter = AtomicUsize::new(0);
     std::thread::scope(|s| {
         let mut workers = vec![];
         let mut i = image_height as i64;
@@ -158,6 +162,7 @@ fn main() {
             let worker_stop = i.max(0);
             let world = &world;
             let camera = &camera;
+            let counter = &counter;
             workers.push(s.spawn(move || {
                 let mut res = vec![];
                 for iy in (worker_stop..worker_start).rev() {
@@ -171,17 +176,28 @@ fn main() {
                         }
                         res.push(pixel_color);
                     }
+                    counter.fetch_add(1, Ordering::Relaxed);
                 }
                 res
             }));
         }
+        s.spawn(|| loop {
+            let count = counter.load(Ordering::Relaxed);
+            print!("{RESET_LINE}");
+            if count >= image_height as usize {
+                println!("Done.");
+                break;
+            } else {
+                print!("Progress: {count} / {image_height}");
+                stdout().flush().unwrap();
+                thread::sleep(Duration::from_secs(1));
+            }
+        });
         for worker in workers {
             let res = worker.join().unwrap();
             for color in res {
                 write_color(&mut out, &color, samples_per_pixel);
             }
-        }       
-        print!("{RESET_LINE}");
-        println!("Done.");
+        }
     })
 }

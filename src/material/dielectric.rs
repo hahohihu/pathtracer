@@ -34,11 +34,12 @@ impl Material for Dielectric {
         let sin_theta = (1.0 - cos_theta * cos_theta).sqrt();
 
         let cannot_refract = refraction_ratio * sin_theta > 1.0;
-        let direction = if cannot_refract || self.reflectance(cos_theta, refraction_ratio) > random::unit() {
-            unit_direction.reflect(&rec.normal)
-        } else {
-            unit_direction.refract(&rec.normal, refraction_ratio)
-        };
+        let direction =
+            if cannot_refract || self.reflectance(cos_theta, refraction_ratio) > random::unit() {
+                unit_direction.reflect(&rec.normal)
+            } else {
+                unit_direction.refract(&rec.normal, refraction_ratio)
+            };
 
         Some(ScatterRecord {
             scattered: Ray::new(rec.point, direction),
