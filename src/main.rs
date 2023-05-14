@@ -2,6 +2,7 @@ mod vec3;
 mod ray;
 mod hittable;
 mod sphere;
+mod hit_list;
 
 use std::{io::{Write, stdout, BufWriter}, fs::File};
 use hittable::Hittable;

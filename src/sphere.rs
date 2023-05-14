@@ -1,6 +1,6 @@
 use crate::{vec3::Point, hittable::{Hittable, HitRecord}, ray::Ray};
 
-#[derive(Default)]
+#[derive(Debug, Default)]
 pub struct Sphere {
     pub center: Point,
     pub radius: f64,
