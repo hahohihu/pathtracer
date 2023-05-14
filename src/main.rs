@@ -6,6 +6,8 @@ mod ray;
 mod rt_weekend;
 mod sphere;
 mod vec3;
+mod material;
+mod metal;
 
 use hit_list::HitList;
 use hittable::Hittable;
@@ -17,19 +19,25 @@ use std::{
     rc::Rc,
 };
 
-use crate::camera::Camera;
+use crate::{camera::Camera, metal::Metal};
 
 const RESET_LINE: &str = "\x1B[2K\r";
 
 fn ray_color(ray: &Ray, world: &HitList, depth: usize) -> Color {
+    let black = Color::new(0.0, 0.0, 0.0);
     if depth == 0 {
-        return Color::new(0.0, 0.0, 0.0);
+        return black;
     }
     let white = Color::new(1.0, 1.0, 1.0);
-    if let Some(rec) = world.hit(ray, 0.001, f64::INFINITY) {
-        let target = rec.point + rec.normal + Vec3::random_unit_vector();
-        // let target = rec.point + Vec3::random_in_hemisphere(&rec.normal);
-        0.5 * ray_color(&Ray::new(rec.point, target - rec.point), world, depth - 1)
+    if let Some(hit_rec) = world.hit(ray, 0.001, f64::INFINITY) {
+        if let Some(mat_rec) = hit_rec.material.scatter(ray, &hit_rec) {
+            mat_rec.attenuation * ray_color(&mat_rec.scattered, world, depth - 1)
+            // let target = hit_rec.point + hit_rec.normal + Vec3::random_unit_vector();
+            // let target = rec.point + Vec3::random_in_hemisphere(&rec.normal);
+            // 0.5 * ray_color(&Ray::new(hit_rec.point, target - hit_rec.point), world, depth - 1)
+        } else {
+            black
+        }
     } else {
         let unit_dir = ray.direction.unit_vec();
         let alpha = 0.5 * (unit_dir.y() + 1.0);
@@ -76,8 +84,8 @@ fn main() {
 
     // World
     let mut world = HitList::default();
-    world.add(Rc::new(Sphere::new(Point::new(0.0, 0.0, -1.0), 0.5)));
-    world.add(Rc::new(Sphere::new(Point::new(0.0, -100.5, -1.0), 100.0)));
+    world.add(Rc::new(Sphere::new(Point::new(-1.0, 0.0, -1.0), 0.5, Rc::new(Metal::new(Color::new(0.8, 0.8, 0.8))))));
+    // world.add(Rc::new(Sphere::new(Point::new(0.0, -100.5, -1.0), 100.0)));
 
     let camera = Camera::new();
 

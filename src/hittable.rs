@@ -1,21 +1,36 @@
-use crate::{ray::Ray, vec3::*};
+use std::rc::Rc;
 
-#[derive(Debug, Default)]
+use crate::{material::Material, ray::Ray, vec3::*};
+
+#[derive(Debug)]
 pub struct HitRecord {
     pub point: Point,
     pub normal: Vec3,
     pub time: f64,
     pub front_face: bool,
+    pub material: Rc<dyn Material>,
 }
 
 impl HitRecord {
-    pub fn set_face_normal(&mut self, ray: &Ray, outward_normal: &Vec3) {
-        self.front_face = ray.direction.dot(outward_normal) < 0.0;
-        self.normal = if self.front_face {
-            *outward_normal
-        } else {
-            -*outward_normal
-        };
+    pub fn new(
+        point: Point,
+        time: f64,
+        material: Rc<dyn Material>,
+        ray: &Ray,
+        outward_normal: &Vec3,
+    ) -> Self {
+        let front_face = ray.direction.dot(outward_normal) < 0.0;
+        Self {
+            point,
+            time,
+            material,
+            front_face,
+            normal: if front_face {
+                *outward_normal
+            } else {
+                -*outward_normal
+            },
+        }
     }
 }
 

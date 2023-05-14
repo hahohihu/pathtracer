@@ -69,6 +69,10 @@ impl Vec3 {
             -point
         }
     }
+
+    pub fn reflect(&self, other: &Self) -> Self {
+        *self - 2.0 * self.dot(other) * *other
+    }
 }
 
 impl Display for Vec3 {
