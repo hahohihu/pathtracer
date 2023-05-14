@@ -1,13 +1,10 @@
 mod camera;
 mod hittable;
 mod material;
-mod random;
-mod ray;
-mod rt_weekend;
-mod vec3;
+mod common;
 
 use hittable::Hittable;
-use rt_weekend::*;
+use common::*;
 use std::{
     fs::File,
     io::{stdout, BufWriter, Write},

@@ -1,4 +1,4 @@
-use crate::{rt_weekend::*, material::{Material, ScatterRecord}};
+use crate::{common::*, material::{Material, ScatterRecord}};
 
 #[derive(Debug)]
 pub struct Metal {

@@ -1,7 +1,7 @@
 use crate::{
     hittable::HitRecord,
     material::{Material, ScatterRecord},
-    rt_weekend::*,
+    common::*,
 };
 
 #[derive(Debug)]

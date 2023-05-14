@@ -1,7 +1,7 @@
 pub mod lambertian;
 pub mod metal;
 
-use crate::{rt_weekend::*, hittable::HitRecord};
+use crate::{common::*, hittable::HitRecord};
 
 pub struct ScatterRecord {
     pub scattered: Ray,

@@ -1,4 +1,4 @@
-use crate::rt_weekend::*;
+use crate::common::*;
 
 pub struct Camera {
     pub origin: Point,
