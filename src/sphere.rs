@@ -35,7 +35,7 @@ impl Hittable for Sphere {
 
         let point = ray.at(root);
         Some(HitRecord {
-            t: root,
+            normal: root,
             point,
             normal: (point - self.center) / self.radius
         })

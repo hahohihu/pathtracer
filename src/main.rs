@@ -14,7 +14,7 @@ const RESET_LINE: &str = "\x1B[2K\r";
 fn hit_sphere(center: &Point, radius: f64, ray: &Ray) -> f64 {
     let sphere = Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5);
     if let Some(record) = sphere.hit(ray, 0.0, 5.0) {
-        record.t
+        record.normal
     } else {
         -1.0
     }

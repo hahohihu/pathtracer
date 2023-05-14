@@ -3,7 +3,7 @@ use crate::{vec3::*, ray::Ray};
 pub struct HitRecord {
     pub point: Point,
     pub normal: Vec3,
-    pub t: f64,
+    pub normal: f64,
 }
 
 pub trait Hittable {
