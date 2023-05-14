@@ -22,15 +22,15 @@ fn hit_sphere(center: &Point, radius: f64, ray: &Ray) -> f64 {
 
 fn ray_color(ray: &Ray) -> Color {
     let center = Point::new(0.0, 0.0, -1.0);
-    let t = hit_sphere(&center, 0.5, ray);
-    if t > 0.0 {
-        let unit_vec = ray.at(t) - center;
+    let normal = hit_sphere(&center, 0.5, ray);
+    if normal > 0.0 {
+        let unit_vec = ray.at(normal) - center;
         let unit_vec = unit_vec.unit_vec();
         0.5 * (unit_vec + 1.0)
     } else {
         let unit_dir = ray.direction.unit_vec();
-        let t = 0.5 * (unit_dir.y() + 1.0);
-        (1.0 - t) * Color::new(1.0, 1.0, 1.0) + t * Color::new(0.5, 0.7, 1.0)
+        let alpha = 0.5 * (unit_dir.y() + 1.0);
+        (1.0 - alpha) * Color::new(1.0, 1.0, 1.0) + alpha * Color::new(0.5, 0.7, 1.0)
     }
 }
 
