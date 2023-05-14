@@ -1,9 +1,7 @@
 mod camera;
 mod hit_list;
 mod hittable;
-mod lambertian;
 mod material;
-mod metal;
 mod random;
 mod ray;
 mod rt_weekend;
@@ -19,8 +17,12 @@ use std::{
     io::{stdout, BufWriter, Write},
     rc::Rc,
 };
+use material::{
+    lambertian::Lambertian,
+    metal::Metal
+};
 
-use crate::{camera::Camera, lambertian::Lambertian, metal::Metal};
+use crate::{camera::Camera};
 
 const RESET_LINE: &str = "\x1B[2K\r";
 

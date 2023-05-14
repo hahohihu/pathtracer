@@ -1,3 +1,6 @@
+pub mod lambertian;
+pub mod metal;
+
 use crate::{rt_weekend::*, hittable::HitRecord};
 
 pub struct ScatterRecord {
