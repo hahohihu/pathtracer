@@ -79,7 +79,7 @@ fn main() {
     // World
     let mut world = HitList::default();
     let ground = Rc::new(Lambertian::new(Color::new(0.8, 0.8, 0.0)));
-    let center = Rc::new(Lambertian::new(Color::new(0.7, 0.3, 0.3)));
+    let matte = Rc::new(Lambertian::new(Color::new(0.7, 0.3, 0.3)));
     let metal1 = Rc::new(Metal::new(Color::new(0.8, 0.8, 0.8), 0.3));
     let metal2 = Rc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 1.0));
     let glass = Rc::new(Dielectric::new(1.5));
@@ -91,7 +91,7 @@ fn main() {
     world.add(Rc::new(Sphere::new(
         Point::new(0.0, 0.0, -1.0),
         0.5,
-        center,
+        glass,
     )));
     world.add(Rc::new(Sphere::new(
         Point::new(-1.0, 0.0, -1.0),
@@ -101,7 +101,7 @@ fn main() {
     world.add(Rc::new(Sphere::new(
         Point::new(1.0, 0.0, -1.0),
         0.5,
-        glass,
+        matte,
     )));
     // world.add(Rc::new(Sphere::new(Point::new(0.0, -100.5, -1.0), 100.0)));
 
