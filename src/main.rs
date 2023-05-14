@@ -1,22 +1,22 @@
 mod vec3;
 mod ray;
+mod hittable;
+mod sphere;
 
 use std::{io::{Write, stdout, BufWriter}, fs::File};
+use hittable::Hittable;
 use ray::Ray;
+use sphere::Sphere;
 use vec3::*;
 
 const RESET_LINE: &str = "\x1B[2K\r"; 
 
 fn hit_sphere(center: &Point, radius: f64, ray: &Ray) -> f64 {
-    let oc = ray.origin - *center;
-    let a = ray.direction.length_squared();
-    let h = oc.dot(&ray.direction);
-    let c = oc.length_squared() - radius * radius;
-    let discriminant = h * h - a * c;
-    if discriminant < 0.0 {
-        -1.0
+    let sphere = Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5);
+    if let Some(record) = sphere.hit(ray, 0.0, 5.0) {
+        record.t
     } else {
-        (-h - discriminant.sqrt()) / a
+        -1.0
     }
 }
 
