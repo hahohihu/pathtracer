@@ -1,17 +1,13 @@
 mod camera;
-mod hit_list;
 mod hittable;
 mod material;
 mod random;
 mod ray;
 mod rt_weekend;
-mod sphere;
 mod vec3;
 
-use hit_list::HitList;
 use hittable::Hittable;
 use rt_weekend::*;
-use sphere::Sphere;
 use std::{
     fs::File,
     io::{stdout, BufWriter, Write},
@@ -20,6 +16,10 @@ use std::{
 use material::{
     lambertian::Lambertian,
     metal::Metal
+};
+use hittable::{
+    hit_list::HitList,
+    sphere::Sphere,
 };
 
 use crate::{camera::Camera};
