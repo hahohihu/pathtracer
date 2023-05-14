@@ -57,6 +57,9 @@ impl Vec3 {
             }
         }
     }
+    pub fn random_unit_vector() -> Self {
+        Self::random_in_unit_sphere().unit_vec()
+    }
 }
 
 impl Display for Vec3 {
