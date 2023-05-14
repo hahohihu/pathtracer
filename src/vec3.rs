@@ -41,6 +41,22 @@ impl Vec3 {
     pub fn unit_vec(&self) -> Self {
         *self / self.length()
     }
+    pub fn random(lower: f64, upper: f64) -> Self {
+        use crate::random;
+        Self(
+            random::range(lower, upper),
+            random::range(lower, upper),
+            random::range(lower, upper),
+        )
+    }
+    pub fn random_in_unit_sphere() -> Self {
+        loop {
+            let point = Self::random(-1.0, 1.0);
+            if point.length_squared() < 1.0 {
+                return point;
+            }
+        }
+    }
 }
 
 impl Display for Vec3 {

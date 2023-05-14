@@ -17,10 +17,14 @@ use crate::camera::Camera;
 
 const RESET_LINE: &str = "\x1B[2K\r"; 
 
-fn ray_color(ray: &Ray, world: &HitList) -> Color {
+fn ray_color(ray: &Ray, world: &HitList, depth: usize) -> Color {
+    if depth == 0 {
+        return Color::new(0.0, 0.0, 0.0);
+    }
     let white = Color::new(1.0, 1.0, 1.0);
     if let Some(rec) = world.hit(ray, 0.0, f64::INFINITY) {
-        0.5 * (rec.normal + white)
+        let target = rec.point + rec.normal + Vec3::random_in_unit_sphere();
+        0.5 * ray_color(&Ray::new(rec.point, target - rec.point), world, depth - 1)
     } else {
         let unit_dir = ray.direction.unit_vec();
         let alpha = 0.5 * (unit_dir.y() + 1.0);
@@ -58,6 +62,7 @@ fn main() {
     let image_width = 400.0;
     let image_height = image_width / ASPECT_RATIO;
     let samples_per_pixel = 100;
+    let max_depth = 50;
 
     writeln!(out, "P3").unwrap();
     writeln!(out, "{image_width} {image_height}").unwrap();
@@ -83,7 +88,7 @@ fn main() {
                 let u = (ix as f64 + rand_aa_modifier()) / (image_width - 1.0);
                 let v = (iy as f64 + rand_aa_modifier()) / (image_height - 1.0);
                 let ray = camera.get_ray(u, v);
-                pixel_color += ray_color(&ray, &world);
+                pixel_color += ray_color(&ray, &world, max_depth);
             }
             write_color(&mut out, &pixel_color, samples_per_pixel);
         }
