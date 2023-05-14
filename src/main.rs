@@ -1,13 +1,14 @@
 mod camera;
 mod hit_list;
 mod hittable;
+mod lambertian;
+mod material;
+mod metal;
 mod random;
 mod ray;
 mod rt_weekend;
 mod sphere;
 mod vec3;
-mod material;
-mod metal;
 
 use hit_list::HitList;
 use hittable::Hittable;
@@ -19,7 +20,7 @@ use std::{
     rc::Rc,
 };
 
-use crate::{camera::Camera, metal::Metal};
+use crate::{camera::Camera, lambertian::Lambertian, metal::Metal};
 
 const RESET_LINE: &str = "\x1B[2K\r";
 
@@ -84,7 +85,30 @@ fn main() {
 
     // World
     let mut world = HitList::default();
-    world.add(Rc::new(Sphere::new(Point::new(-1.0, 0.0, -1.0), 0.5, Rc::new(Metal::new(Color::new(0.8, 0.8, 0.8))))));
+    let ground = Rc::new(Lambertian::new(Color::new(0.8, 0.8, 0.0)));
+    let center = Rc::new(Lambertian::new(Color::new(0.7, 0.3, 0.3)));
+    let metal1 = Rc::new(Metal::new(Color::new(0.8, 0.8, 0.8)));
+    let metal2 = Rc::new(Metal::new(Color::new(0.8, 0.6, 0.2)));
+    world.add(Rc::new(Sphere::new(
+        Point::new(0.0, -100.5, -1.0),
+        100.0,
+        ground,
+    )));
+    world.add(Rc::new(Sphere::new(
+        Point::new(0.0, 0.0, -1.0),
+        0.5,
+        center,
+    )));
+    world.add(Rc::new(Sphere::new(
+        Point::new(-1.0, 0.0, -1.0),
+        0.5,
+        metal1,
+    )));
+    world.add(Rc::new(Sphere::new(
+        Point::new(1.0, 0.0, -1.0),
+        0.5,
+        metal2,
+    )));
     // world.add(Rc::new(Sphere::new(Point::new(0.0, -100.5, -1.0), 100.0)));
 
     let camera = Camera::new();

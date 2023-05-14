@@ -73,6 +73,11 @@ impl Vec3 {
     pub fn reflect(&self, other: &Self) -> Self {
         *self - 2.0 * self.dot(other) * *other
     }
+
+    pub fn near_zero(&self) -> bool {
+        let near_zero = |f: f64| f.abs() < 1e-8;
+        near_zero(self.0) && near_zero(self.1) && near_zero(self.2)
+    }
 }
 
 impl Display for Vec3 {
