@@ -50,6 +50,10 @@ impl Vec3 {
         *self / self.length()
     }
 
+    
+    pub fn random_unit() -> Self {
+        Self::random(0.0, 1.0)
+    }
     pub fn random(lower: f64, upper: f64) -> Self {
         Self(
             random::range(lower, upper),
