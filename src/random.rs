@@ -1,8 +1,6 @@
-use std::borrow::Borrow;
-use std::cell::RefCell;
-use rand::{rngs::SmallRng, SeedableRng};
 use rand::Rng;
-
+use rand::{rngs::SmallRng, SeedableRng};
+use std::cell::RefCell;
 
 thread_local! {
     static RNG: RefCell<SmallRng> = RefCell::new(SmallRng::from_entropy());

@@ -9,7 +9,7 @@ pub struct HitList {
 impl HitList {
     pub fn new(object: Rc<dyn Hittable>) -> Self {
         Self {
-            objects: vec![object]
+            objects: vec![object],
         }
     }
 

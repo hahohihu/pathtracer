@@ -1,21 +1,25 @@
-mod vec3;
-mod ray;
-mod hittable;
-mod sphere;
-mod hit_list;
-mod rt_weekend;
 mod camera;
+mod hit_list;
+mod hittable;
 mod random;
+mod ray;
+mod rt_weekend;
+mod sphere;
+mod vec3;
 
-use std::{io::{Write, stdout, BufWriter}, fs::File, rc::Rc};
 use hit_list::HitList;
 use hittable::Hittable;
-use sphere::Sphere;
 use rt_weekend::*;
+use sphere::Sphere;
+use std::{
+    fs::File,
+    io::{stdout, BufWriter, Write},
+    rc::Rc,
+};
 
 use crate::camera::Camera;
 
-const RESET_LINE: &str = "\x1B[2K\r"; 
+const RESET_LINE: &str = "\x1B[2K\r";
 
 fn ray_color(ray: &Ray, world: &HitList, depth: usize) -> Color {
     if depth == 0 {
@@ -52,7 +56,8 @@ fn write_color(f: &mut impl Write, color: &Color, samples_per_pixel: u32) {
         translate_rgb_to_int(r),
         translate_rgb_to_int(g),
         translate_rgb_to_int(b)
-    ).unwrap()
+    )
+    .unwrap()
 }
 
 fn main() {

@@ -1,10 +1,8 @@
 use std::{
+    fmt::Display,
     io::Write,
-    fmt::{Display},
-    ops::{Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign, AddAssign, Add},
+    ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign},
 };
-
-
 
 #[derive(Default, Debug, Clone, Copy)]
 pub struct Vec3(pub f64, pub f64, pub f64);

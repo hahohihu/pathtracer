@@ -1,4 +1,8 @@
-use crate::{vec3::Point, hittable::{Hittable, HitRecord}, ray::Ray};
+use crate::{
+    hittable::{HitRecord, Hittable},
+    ray::Ray,
+    vec3::Point,
+};
 
 #[derive(Debug, Default)]
 pub struct Sphere {
