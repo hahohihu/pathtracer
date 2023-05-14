@@ -7,7 +7,15 @@ use std::{
 pub struct Vec3(pub f64, pub f64, pub f64);
 
 impl Vec3 {
-    pub fn new(x: f64, y: f64, z: f64) -> Self {
+    pub const fn black() -> Self {
+        Self(0.0, 0.0, 0.0)
+    }
+
+    pub const fn white() -> Self {
+        Self(1.0, 1.0, 1.0)
+    }
+
+    pub const fn new(x: f64, y: f64, z: f64) -> Self {
         Vec3(x, y, z)
     }
     pub fn x(&self) -> f64 {
@@ -71,6 +79,12 @@ impl Vec3 {
 
     pub fn reflect(&self, other: &Self) -> Self {
         *self - 2.0 * self.dot(other) * *other
+    }
+    pub fn refract(&self, normal: &Self, etai_over_etat: f64) -> Self {
+        let cos_theta = (-*self).dot(normal).min(1.0);
+        let r_out_perp = etai_over_etat * (*self + cos_theta * *normal);
+        let r_out_parallel = -(1.0 - r_out_perp.length_squared()).abs().sqrt() * *normal;
+        r_out_perp + r_out_parallel
     }
 
     pub fn near_zero(&self) -> bool {
