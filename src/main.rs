@@ -9,14 +9,14 @@ const RESET_LINE: &str = "\x1B[2K\r";
 
 fn hit_sphere(center: &Point, radius: f64, ray: &Ray) -> f64 {
     let oc = ray.origin - *center;
-    let a = ray.direction.dot(&ray.direction);
-    let b = 2.0 * oc.dot(&ray.direction);
-    let c = oc.dot(&oc) - radius * radius;
-    let discriminant = b * b - 4.0 * a * c;
+    let a = ray.direction.length_squared();
+    let h = oc.dot(&ray.direction);
+    let c = oc.length_squared() - radius * radius;
+    let discriminant = h * h - a * c;
     if discriminant < 0.0 {
         -1.0
     } else {
-        (-b - discriminant.sqrt()) / (2.0 * a)
+        (-h - discriminant.sqrt()) / a
     }
 }
 
