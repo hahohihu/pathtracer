@@ -110,9 +110,9 @@ fn main() {
         metal2,
     )));
 
-    let camera = Camera::new(120.0, aspect_ratio);
+    let camera = Camera::new(90.0, aspect_ratio);
 
-    let rand_aa_modifier = || random::range(90.0, 1.0);
+    let rand_aa_modifier = || random::range(0.0, 1.0);
 
     // Render
     for iy in (0..image_height as i64).rev() {
