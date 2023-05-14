@@ -3,35 +3,24 @@ mod ray;
 mod hittable;
 mod sphere;
 mod hit_list;
+mod rt_weekend;
 
-use std::{io::{Write, stdout, BufWriter}, fs::File};
+use std::{io::{Write, stdout, BufWriter}, fs::File, rc::Rc};
+use hit_list::HitList;
 use hittable::Hittable;
-use ray::Ray;
 use sphere::Sphere;
-use vec3::*;
+use rt_weekend::*;
 
 const RESET_LINE: &str = "\x1B[2K\r"; 
 
-fn hit_sphere(center: &Point, radius: f64, ray: &Ray) -> f64 {
-    let sphere = Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5);
-    if let Some(record) = sphere.hit(ray, 0.0, 5.0) {
-        record.time
-    } else {
-        -1.0
-    }
-}
-
-fn ray_color(ray: &Ray) -> Color {
-    let center = Point::new(0.0, 0.0, -1.0);
-    let time = hit_sphere(&center, 0.5, ray);
-    if time > 0.0 {
-        let unit_vec = ray.at(time) - center;
-        let unit_vec = unit_vec.unit_vec();
-        0.5 * (unit_vec + 1.0)
+fn ray_color(ray: &Ray, world: &HitList) -> Color {
+    let white = Color::new(1.0, 1.0, 1.0);
+    if let Some(rec) = world.hit(ray, 0.0, f64::INFINITY) {
+        0.5 * (rec.normal + white)
     } else {
         let unit_dir = ray.direction.unit_vec();
         let alpha = 0.5 * (unit_dir.y() + 1.0);
-        (1.0 - alpha) * Color::new(1.0, 1.0, 1.0) + alpha * Color::new(0.5, 0.7, 1.0)
+        (1.0 - alpha) * white + alpha * Color::new(0.5, 0.7, 1.0)
     }
 }
 
@@ -47,6 +36,11 @@ fn main() {
     writeln!(out, "P3").unwrap();
     writeln!(out, "{image_width} {image_height}").unwrap();
     writeln!(out, "255").unwrap();
+
+    // World
+    let mut world = HitList::default();
+    world.add(Rc::new(Sphere::new(Point::new(0.0, 0.0, -1.0), 0.5)));
+    world.add(Rc::new(Sphere::new(Point::new(0.0, -100.5, -1.0), 100.0)));
 
     // Camera
     let viewport_height = 2.0;
@@ -67,7 +61,7 @@ fn main() {
             let u = (ix as f64) / (image_width - 1.0);
             let v = (iy as f64) / (image_height - 1.0);
             let ray = Ray::new(origin, lower_left_corner + u * horizontal + v * vertical - origin);
-            let color = ray_color(&ray);
+            let color = ray_color(&ray, &world);
             color.show_as_color(&mut out);
         }
     }

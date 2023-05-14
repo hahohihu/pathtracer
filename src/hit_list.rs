@@ -2,7 +2,7 @@ use crate::hittable::*;
 use std::rc::Rc;
 
 #[derive(Debug, Default)]
-struct HitList {
+pub struct HitList {
     pub objects: Vec<Rc<dyn Hittable>>,
 }
 
