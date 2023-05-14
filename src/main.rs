@@ -8,6 +8,8 @@ use hittable::Hittable;
 use hittable::{hit_list::HitList, sphere::Sphere};
 use material::Material;
 use material::{dielectric::Dielectric, lambertian::Lambertian, metal::Metal};
+use rand::Rng;
+use rand_distr::Pareto;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::thread;
 use std::time::Duration;
@@ -77,12 +79,14 @@ fn make_random_scene() -> HitList {
     for a in -11..11 {
         for b in -11..11 {
             let material_choice = random::unit();
+            let size: f64 = rand::thread_rng().sample(Pareto::new(1., 2.).unwrap()) * 0.07;
+            let size = size.min(0.6);
             let center = Point::new(
                 a as f64 + 0.9 * random::unit(),
-                0.2,
+                size,
                 b as f64 + 0.9 * random::unit(),
             );
-            if (center - Point::new(4.0, 0.2, 0.0)).length() > 0.9 {
+            if (center - Point::new(4.0, size, 0.0)).length() > 0.9 {
                 let mat: Arc<dyn Material> = if material_choice < 0.8 {
                     let albedo = Color::random_unit() * Color::random_unit();
                     Arc::new(Lambertian::new(albedo))
@@ -93,7 +97,7 @@ fn make_random_scene() -> HitList {
                 } else {
                     Arc::new(Dielectric::new(1.5))
                 };
-                world.add(Arc::new(Sphere::new(center, 0.2, mat)));
+                world.add(Arc::new(Sphere::new(center, size, mat)));
             }
         }
     }
