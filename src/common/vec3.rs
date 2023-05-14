@@ -2,6 +2,7 @@ use std::{
     fmt::Display,
     ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign},
 };
+use crate::random;
 
 #[derive(Default, Debug, Clone, Copy)]
 pub struct Vec3(pub f64, pub f64, pub f64);
@@ -50,7 +51,6 @@ impl Vec3 {
     }
 
     pub fn random(lower: f64, upper: f64) -> Self {
-        use crate::random;
         Self(
             random::range(lower, upper),
             random::range(lower, upper),
@@ -74,6 +74,14 @@ impl Vec3 {
             point
         } else {
             -point
+        }
+    }
+    pub fn random_in_unit_disk() -> Self {
+        loop {
+            let point = Self(random::range(-1.0, 1.0), random::range(-1.0, 1.0), 0.0);
+            if point.length_squared() < 1.0 {
+                return point;
+            }
         }
     }
 
