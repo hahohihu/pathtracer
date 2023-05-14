@@ -5,11 +5,11 @@ mod sphere;
 mod hit_list;
 mod rt_weekend;
 mod camera;
+mod random;
 
 use std::{io::{Write, stdout, BufWriter}, fs::File, rc::Rc};
 use hit_list::HitList;
 use hittable::Hittable;
-use rand::Rng;
 use sphere::Sphere;
 use rt_weekend::*;
 
@@ -70,8 +70,7 @@ fn main() {
 
     let camera = Camera::new();
 
-    let mut rng = rand::thread_rng();
-    let mut rand_aa_modifier = || rng.gen_range(0.0..1.0);
+    let rand_aa_modifier = || random::range(0.0, 1.0);
 
     // Render
     for iy in (0..image_height as i64).rev() {
