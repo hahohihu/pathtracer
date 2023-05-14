@@ -13,3 +13,7 @@ pub fn range(lower: f64, upper: f64) -> f64 {
         gen.gen_range(lower..upper)
     })
 }
+
+pub fn unit() -> f64 {
+    range(0.0, 1.0)
+}
